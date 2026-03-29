@@ -19,39 +19,39 @@ public class Customer {
 
     // setter dan getter
     public String getNama() {
-        return nama;
+        return this.nama;
     }
 
     public String getAlamat() {
-        return alamat;
+        return this.alamat;
     }
 
     public String getNoTelp() {
-        return noTelp;
+        return this.noTelp;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public String setNama(String nama) {
         this.nama = nama;
-        return nama;
+        return this.nama;
     }
 
     public String setAlamat(String alamat) {
         this.alamat = alamat;
-        return alamat;
+        return this.alamat;
     }
 
     public String setNoTelp(String noTelp) {
         this.noTelp = noTelp;
-        return noTelp;
+        return this.noTelp;
     }
 
     public String setPassword(String password) {
         this.password = password;
-        return password;
+        return this.password;
     }
 
     // method login

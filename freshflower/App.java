@@ -7,7 +7,8 @@ public class App {
     public static void main(String[] args) {
         boolean isLogin = false;
         Scanner scanner = new Scanner(System.in);
-        Produk produk = null;
+        Bucket[] daftarBucket = new Bucket[10];
+        int jumlahBucket = 0;
         Admin admin = new Admin();
         Customer customer = new Customer();
         int pilih, pilih2 ;
@@ -41,45 +42,78 @@ public class App {
                                 pilih2 = scanner.nextInt();
                                 switch (pilih2) {
                                     case 1:
-                                        System.out.println("Jenis: ");
                                         scanner.nextLine();
-                                        String jenis = scanner.nextLine();
-                                        System.out.println("Harga: ");
+                                        System.out.print("nama: ");
+                                        String nama = scanner.nextLine();
+                                        System.out.print("Harga: ");
                                         int harga = scanner.nextInt();
-                                        System.out.println("Stok: ");
+                                        System.out.print("Stok: ");
                                         int stok = scanner.nextInt();
-                                        produk = new Produk(jenis, harga, stok);
+                                        daftarBucket[jumlahBucket] = new Bucket(nama, harga, stok, null);
+                                        jumlahBucket++;
 
                                         break;
                                     case 2:
-                                        if (produk == null) {
+                                        if (daftarBucket[0] == null) {
                                             System.out.println("Data produk kosong");
                                         } else {
-                                            System.out.println(produk.toString());
+                                            for (int i = 0; i < jumlahBucket; i++) {
+                                                System.out.println(daftarBucket[i].toString());
+                                            }
                                         }
                                         break;
                                     case 3:
-                                        if (produk == null) {
-                                            System.out.println("Data produk kosong");
-                                        } else {
-                                            System.out.println(produk.toString());
-                                            System.out.println("Jenis: ");
-                                            scanner.nextLine();
-                                            jenis = scanner.nextLine();
-                                            produk.setJenis(jenis);
-                                            System.out.println("Harga: ");
-                                            harga = scanner.nextInt();
-                                            produk.setHarga(harga);
-                                            System.out.println("Stok: ");
-                                            stok = scanner.nextInt();
-                                            produk.setStok(stok);
+                                        while (isLogin==true) {
+                                            System.out.println("pilih   ");
+                                            System.out.println("1. Ubah nama");
+                                            System.out.println("2. Ubah harga");
+                                            System.out.println("3. Ubah stok");
+                                            System.out.println("4. Back");
+                                            System.out.print("Pilih menu: ");
+                                            pilih2 = scanner.nextInt();
+                                            switch (pilih2) {
+                                                case 1:
+                                                    if (daftarBucket[0] == null) {
+                                                        System.out.println("Data produk kosong");
+                                                    } else {
+                                                        System.out.print("nama: ");
+                                                        scanner.nextLine();
+                                                        nama = scanner.nextLine();
+                                                        daftarBucket[0].setNama(nama);
+                                                    }
+                                                    break;
+                                                case 2:
+                                                    if (daftarBucket[0] == null) {
+                                                        System.out.println("Data produk kosong");
+                                                    } else {
+                                                        System.out.print("Harga: ");
+                                                        harga = scanner.nextInt();
+                                                        daftarBucket[0].setHargaDasar(harga);
+                                                    }
+                                                    break;
+                                                case 3:
+                                                    if (daftarBucket[0] == null) {
+                                                        System.out.println("Data produk kosong");
+                                                    } else {
+                                                        System.out.print("Stok: ");
+                                                        stok = scanner.nextInt();
+                                                        daftarBucket[0].setStok(stok);
+                                                    }
+                                                    break;
+                                                case 4:
+                                                    isLogin = false;
+                                                    break;
+
+                                                default:
+                                                    System.out.println("Pilihan tidak valid!");
+                                                    break;
+                                            }
                                         }
-                                        break;
                                     case 4:
-                                        if (produk == null) {
+                                        if (daftarBucket[0] == null) {
                                             System.out.println("Data produk kosong");
                                         } else {
-                                            produk = null;
+                                            daftarBucket[0] = null;
                                             System.out.println("Produk berhasil dihapus");
                                         }
                                         break;
@@ -102,9 +136,9 @@ public class App {
                     if (jawaban.equals("y")) {
                         // member login
                         do {
-                            System.out.println("No. Telepon: ");
+                            System.out.print("No. Telepon: ");
                             String noTelp = scanner.next();
-                            System.out.println("Password: ");
+                            System.out.print("Password: ");
                             String password = scanner.next();
                             if (customer.login(noTelp, password)) {
                                 System.out.println("Login berhasil!");
@@ -119,13 +153,13 @@ public class App {
 
                     } else {
                         // non-member login
-                        System.out.println("Masukkan nama: ");
+                        System.out.print("Masukkan nama: ");
                         String nama = scanner.next();
-                        System.out.println("Masukkan alamat: ");
+                        System.out.print("Masukkan alamat: ");
                         String alamat = scanner.next();
-                        System.out.println("Masukkan no. telepon: ");
+                        System.out.print("Masukkan no. telepon: ");
                         String noTelp = scanner.next();
-                        System.out.println("Masukkan password: ");
+                        System.out.print("Masukkan password: ");
                         String password = scanner.next();
                         customer = new Customer(nama, alamat, noTelp, password);
                         System.out.println("Registrasi berhasil!");
