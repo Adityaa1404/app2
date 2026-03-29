@@ -42,7 +42,6 @@ class Bucket {
         this.stok = stok;
     }
 
-    @Override
     public String toString() {
         // TODO Auto-generated method stub
         return "Bucket [nama=" + nama + ", hargaDasar=" + hargaDasar + ", stok=" + stok  + "]";
