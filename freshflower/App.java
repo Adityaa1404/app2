@@ -46,35 +46,26 @@ public class App {
         return nomor - 1;
     }
 
-    private static void lihatKeranjang(Bucket[] daftarBucket, int[] indexKeranjang, int[] qtyKeranjang, int jumlahKeranjang) {
-        if (jumlahKeranjang == 0) {
+    private static void lihatKeranjang(ContainerTransaksi transaksi) {
+        if (transaksi.isKosong()) {
             System.out.println("Keranjang masih kosong");
             return;
         }
 
-        double total = 0;
+        double total = transaksi.hitungTotal();
         System.out.println("Isi Keranjang:");
-        for (int i = 0; i < jumlahKeranjang; i++) {
-            Bucket produk = daftarBucket[indexKeranjang[i]];
-            double subtotal = produk.getHargaDasar() * qtyKeranjang[i];
-            total += subtotal;
-            System.out.println((i + 1) + ". " + produk.getNama() + " | Qty: " + qtyKeranjang[i] + " | Subtotal: "
+        for (int i = 0; i < transaksi.getJumlahItem(); i++) {
+            Bucket produk = transaksi.getProduk(i);
+            int qty = transaksi.getQty(i);
+            double subtotal = produk.getHargaDasar() * qty;
+            System.out.println((i + 1) + ". " + produk.getNama() + " | Qty: " + qty + " | Subtotal: "
                     + subtotal);
         }
         System.out.println("Total sementara: " + total);
     }
 
-    private static int cariProdukDiKeranjang(int[] indexKeranjang, int jumlahKeranjang, int indexProduk) {
-        for (int i = 0; i < jumlahKeranjang; i++) {
-            if (indexKeranjang[i] == indexProduk) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private static void cetakNota(String namaCustomer, boolean member, Bucket[] daftarBucket, int[] indexKeranjang,
-            int[] qtyKeranjang, int jumlahKeranjang, double total, double diskon, double totalBayar, double bayar,
+    private static void cetakNota(String namaCustomer, boolean member, ContainerTransaksi transaksi,
+            double total, double diskon, double totalBayar, double bayar,
             double kembalian) {
         System.out.println("========================================");
         System.out.println("               FRESHFLOWER              ");
@@ -85,10 +76,11 @@ public class App {
         System.out.println("----------------------------------------");
         System.out.println("Item");
 
-        for (int i = 0; i < jumlahKeranjang; i++) {
-            Bucket produk = daftarBucket[indexKeranjang[i]];
-            double subtotal = produk.getHargaDasar() * qtyKeranjang[i];
-            System.out.println("- " + produk.getNama() + " x" + qtyKeranjang[i] + " = " + subtotal);
+        for (int i = 0; i < transaksi.getJumlahItem(); i++) {
+            Bucket produk = transaksi.getProduk(i);
+            int qty = transaksi.getQty(i);
+            double subtotal = produk.getHargaDasar() * qty;
+            System.out.println("- " + produk.getNama() + " x" + qty + " = " + subtotal);
         }
 
         System.out.println("----------------------------------------");
@@ -275,9 +267,7 @@ public class App {
                         namaCustomer = customer.getNama();
                     }
 
-                    int[] indexKeranjang = new int[MAX_KERANJANG];
-                    int[] qtyKeranjang = new int[MAX_KERANJANG];
-                    int jumlahKeranjang = 0;
+                    ContainerTransaksi transaksi = new ContainerTransaksi(MAX_KERANJANG);
                     int menuCustomer;
 
                     do {
@@ -314,42 +304,30 @@ public class App {
                                 }
 
                                 Bucket produkDipilih = daftarBucket[indexProduk];
-                                int posKeranjang = cariProdukDiKeranjang(indexKeranjang, jumlahKeranjang, indexProduk);
-                                int qtyLama = (posKeranjang == -1) ? 0 : qtyKeranjang[posKeranjang];
+                                int qtyLama = transaksi.getQtyUntukProduk(produkDipilih);
 
                                 if (qty + qtyLama > produkDipilih.getStok()) {
                                     System.out.println("Qty melebihi stok yang tersedia");
                                     break;
                                 }
 
-                                if (posKeranjang != -1) {
-                                    qtyKeranjang[posKeranjang] += qty;
-                                } else {
-                                    if (jumlahKeranjang >= MAX_KERANJANG) {
-                                        System.out.println("Keranjang penuh");
-                                        break;
-                                    }
-                                    indexKeranjang[jumlahKeranjang] = indexProduk;
-                                    qtyKeranjang[jumlahKeranjang] = qty;
-                                    jumlahKeranjang++;
+                                if (!transaksi.tambahItem(produkDipilih, qty)) {
+                                    System.out.println("Keranjang penuh");
+                                    break;
                                 }
 
                                 System.out.println("Produk masuk ke keranjang");
                                 break;
                             case 3:
-                                lihatKeranjang(daftarBucket, indexKeranjang, qtyKeranjang, jumlahKeranjang);
+                                lihatKeranjang(transaksi);
                                 break;
                             case 4:
-                                if (jumlahKeranjang == 0) {
+                                if (transaksi.isKosong()) {
                                     System.out.println("Keranjang masih kosong");
                                     break;
                                 }
 
-                                double total = 0;
-                                for (int i = 0; i < jumlahKeranjang; i++) {
-                                    Bucket produk = daftarBucket[indexKeranjang[i]];
-                                    total += produk.getHargaDasar() * qtyKeranjang[i];
-                                }
+                                double total = transaksi.hitungTotal();
 
                                 double diskon = isMember ? total * 0.1 : 0;
                                 double totalBayar = total - diskon;
@@ -365,16 +343,13 @@ public class App {
                                     break;
                                 }
 
-                                for (int i = 0; i < jumlahKeranjang; i++) {
-                                    Bucket produk = daftarBucket[indexKeranjang[i]];
-                                    produk.setStok(produk.getStok() - qtyKeranjang[i]);
-                                }
+                                transaksi.kurangiStokProduk();
 
                                 double kembalian = bayar - totalBayar;
-                                cetakNota(namaCustomer, isMember, daftarBucket, indexKeranjang, qtyKeranjang,
-                                        jumlahKeranjang, total, diskon, totalBayar, bayar, kembalian);
+                                cetakNota(namaCustomer, isMember, transaksi,
+                                        total, diskon, totalBayar, bayar, kembalian);
 
-                                jumlahKeranjang = 0;
+                                transaksi.kosongkan();
                                 System.out.println("Checkout selesai");
                                 break;
                             case 5:
