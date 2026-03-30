@@ -1,110 +1,146 @@
-# FreshFlower - Aplikasi Toko Bunga
+# FreshFlower - Aplikasi Toko Bunga (Console Java)
 
-Aplikasi Java berbasis console untuk manajemen toko bunga **FreshFlower**. Program ini mensimulasikan sistem multi-peran (Admin, Customer, Owner) dengan fitur login, manajemen produk, dan registrasi pelanggan.
+FreshFlower adalah aplikasi Java berbasis console untuk simulasi operasional toko bunga.
+Program ini mendukung beberapa peran pengguna, manajemen produk, keranjang belanja, checkout, diskon member, dan cetak nota transaksi.
 
----
+## Gambaran Fitur
 
-## Struktur Package
+1. Multi-peran: Admin, Customer, Owner (placeholder).
+2. Login Admin untuk mengelola data produk.
+3. Login Customer member atau registrasi cepat non-member.
+4. Keranjang transaksi yang dapat menyimpan banyak item Bucket.
+5. Checkout dengan validasi stok dan pembayaran.
+6. Diskon otomatis 10% untuk member.
+7. Cetak nota lengkap beserta tanggal transaksi.
+
+## Struktur Folder
 
 ```
 freshflower/
-├── App.java        # Entry point — menu utama & alur program
-├── Admin.java      # Kelas Admin dengan autentikasi
-├── Customer.java   # Kelas Customer dengan login & registrasi
-├── Owner.java      # Kelas Owner (placeholder)
-├── Menu.java       # Kelas Menu (placeholder)
-└── Produk.java     # Kelas model data produk bunga
+|- App.java                 # Entry point dan alur menu utama
+|- Admin.java               # Model admin + autentikasi admin
+|- Customer.java            # Model customer + autentikasi customer
+|- Bucket.java              # Model produk bucket bunga
+|- ContainerTransaksi.java  # Container keranjang/transaksi banyak Bucket
+|- Owner.java               # Placeholder fitur owner
+|- Menu.java                # Placeholder menu terpisah
+`- README.md                # Dokumentasi modul freshflower
 ```
 
----
+## Penjelasan Class
 
-## Deskripsi Kelas
+### App
+Class utama yang menjalankan seluruh flow aplikasi:
+1. Inisialisasi produk awal.
+2. Menampilkan menu utama (Admin/Customer/Owner/Exit).
+3. Menangani menu Admin dan Customer.
+4. Memproses transaksi hingga cetak nota.
 
-### `App.java`
-Entry point aplikasi. Menampilkan menu utama dan mengarahkan alur program sesuai peran yang dipilih:
-- **Admin** — login lalu mengelola produk
-- **Customer** — login sebagai member atau registrasi baru
-- **Owner** — placeholder (belum diimplementasikan)
+Method penting di dalam App:
+1. `tambahProdukAwal(...)`: menambahkan produk default saat aplikasi berjalan.
+2. `lihatProduk(...)`: menampilkan daftar Bucket.
+3. `pilihIndexProduk(...)`: validasi input pemilihan produk.
+4. `lihatKeranjang(...)`: menampilkan isi container transaksi.
+5. `cetakNota(...)`: menampilkan ringkasan akhir pembayaran.
 
-### `Admin.java`
-Kelas yang merepresentasikan admin toko.
-| Field | Tipe | Default |
-|-------|------|---------|
-| `username` | `String` | `"admin"` |
-| `password` | `String` | `"admin123"` |
+### Bucket
+Merepresentasikan produk yang dijual.
 
-**Method:**
-- `login(username, password)` — Memvalidasi kredensial admin.
+Field utama:
+1. `nama` (String)
+2. `hargaDasar` (double)
+3. `stok` (int)
+4. `size` (String)
 
-### `Customer.java`
-Kelas yang merepresentasikan pelanggan (member maupun non-member).
-| Field | Tipe | Keterangan |
-|-------|------|------------|
-| `nama` | `String` | Nama pelanggan |
-| `alamat` | `String` | Alamat pelanggan |
-| `noTelp` | `String` | Nomor telepon (digunakan sebagai username login) |
-| `password` | `String` | Password pelanggan |
+Class ini menyediakan getter/setter untuk manipulasi data produk pada menu Admin dan saat checkout.
 
-**Method:**
-- `login(noTelp, password)` — Memvalidasi login member berdasarkan nomor telepon dan password.
-- Getter & setter untuk semua field.
+### ContainerTransaksi
+Class container untuk menyimpan banyak objek `Bucket` dalam satu transaksi customer.
 
-### `Produk.java`
-Kelas model untuk data produk bunga.
-| Field | Tipe | Keterangan |
-|-------|------|------------|
-| `jenis` | `String` | Jenis/nama bunga |
-| `harga` | `double` | Harga produk |
-| `stok` | `int` | Jumlah stok tersedia |
+Tanggung jawab class:
+1. Menyimpan item dan qty dalam struktur array internal.
+2. Menambah item baru atau menambah qty item yang sama.
+3. Menghitung total belanja dari seluruh item.
+4. Mengurangi stok produk saat checkout berhasil.
+5. Mengosongkan keranjang setelah checkout.
 
-**Method:**
-- `toString()` — Menampilkan informasi produk secara terformat.
-- Getter & setter untuk semua field.
+Method utama:
+1. `tambahItem(Bucket produk, int qty)`
+2. `getQtyUntukProduk(Bucket produk)`
+3. `hitungTotal()`
+4. `kurangiStokProduk()`
+5. `kosongkan()`
 
-### `Owner.java` & `Menu.java`
-Kelas kosong, belum diimplementasikan.
+### Admin
+Model akun admin dengan kredensial default.
 
----
+Field default:
+1. Username: `admin`
+2. Password: `admin123`
 
-## Fitur
+Method utama:
+1. `login(username, password)`
 
-### Menu Admin
-Login menggunakan username dan password, kemudian dapat:
-1. **Tambah Produk** — Memasukkan jenis, harga, dan stok produk baru.
-2. **Lihat Produk** — Menampilkan detail produk yang sudah ditambahkan.
-3. **Ubah Produk** — Mengubah data produk yang sudah ada.
-4. **Hapus Produk** — Menghapus data produk.
+### Customer
+Model data customer member/non-member.
 
-### Menu Customer
-- **Member** — Login menggunakan nomor telepon dan password.
-- **Non-member** — Registrasi akun baru dengan mengisi nama, alamat, nomor telepon, dan password.
+Kemampuan:
+1. Menyimpan data nama, alamat, nomor telepon, password.
+2. Login customer member memakai no telepon dan password.
+3. Dipakai juga untuk menyimpan data registrasi customer non-member.
 
----
+### Owner dan Menu
+Saat ini masih placeholder dan belum memiliki implementasi fitur.
 
-## Cara Menjalankan
+## Alur Program
 
-1. Pastikan Java sudah terinstal (`java -version`).
-2. Kompilasi semua file:
-   ```bash
-   javac freshflower/*.java
-   ```
-3. Jalankan aplikasi:
-   ```bash
-   java freshflower.App
-   ```
-
----
+1. Aplikasi menampilkan menu utama.
+2. Jika Admin login berhasil:
+   1. Admin bisa tambah, lihat, ubah, dan hapus produk.
+3. Jika Customer dipilih:
+   1. Tentukan status member/non-member.
+   2. Customer memilih produk lalu menambahkan qty ke keranjang.
+   3. Keranjang dikelola oleh `ContainerTransaksi`.
+   4. Saat checkout, sistem menghitung total, diskon, dan kembalian.
+   5. Stok produk dikurangi dan nota dicetak.
 
 ## Kredensial Default
 
 | Peran | Login | Password |
-|-------|-------|----------|
-| Admin | `admin` | `admin123` |
-| Customer (member) | `08123456789` | `ceci123` |
+|---|---|---|
+| Admin | admin | admin123 |
+| Customer Member | 08123456789 | ceci123 |
 
----
+## Cara Menjalankan
 
-## Catatan
+1. Pastikan Java JDK sudah terpasang.
+2. Cek versi Java:
 
-- Aplikasi ini masih dalam tahap pengembangan. Kelas `Owner` dan `Menu` belum diimplementasikan.
-- Data produk hanya menyimpan satu produk dalam satu waktu (belum menggunakan koleksi/list).
+```bash
+java -version
+```
+
+3. Kompilasi source code:
+
+```bash
+javac freshflower/*.java
+```
+
+4. Jalankan aplikasi:
+
+```bash
+java freshflower.App
+```
+
+## Batasan Saat Ini
+
+1. Penyimpanan data masih in-memory (belum ke database/file).
+2. Class Owner dan Menu belum diimplementasikan penuh.
+3. Input masih berbasis console sederhana tanpa validasi lanjutan untuk seluruh kasus.
+
+## Rencana Pengembangan
+
+1. Menambahkan fitur riwayat transaksi.
+2. Menambahkan laporan penjualan untuk Owner.
+3. Menambahkan penyimpanan persisten (file atau database).
+4. Meningkatkan validasi input dan penanganan error.
