@@ -46,7 +46,7 @@ public class App {
         return nomor - 1;
     }
 
-    private static void lihatKeranjang(ContainerTransaksi transaksi) {
+    private static void lihatKeranjang(Transaksi transaksi) {
         if (transaksi.isKosong()) {
             System.out.println("Keranjang masih kosong");
             return;
@@ -64,7 +64,7 @@ public class App {
         System.out.println("Total sementara: " + total);
     }
 
-    private static void cetakNota(String namaCustomer, boolean member, ContainerTransaksi transaksi,
+    private static void cetakNota(String namaCustomer, boolean member, Transaksi transaksi,
             double total, double diskon, double totalBayar, double bayar,
             double kembalian) {
         System.out.println("========================================");
@@ -267,7 +267,7 @@ public class App {
                         namaCustomer = customer.getNama();
                     }
 
-                    ContainerTransaksi transaksi = new ContainerTransaksi(MAX_KERANJANG);
+                    Transaksi transaksi = new Transaksi(MAX_KERANJANG);
                     int menuCustomer;
 
                     do {

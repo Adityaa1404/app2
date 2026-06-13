@@ -46,6 +46,7 @@ class Bucket {
         // TODO Auto-generated method stub
         return "Bucket [nama=" + nama + ", hargaDasar=" + hargaDasar + ", stok=" + stok  + "]";
     }
+    
 }
 
 

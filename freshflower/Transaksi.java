@@ -1,30 +1,33 @@
 package freshflower;
 
-class ContainerTransaksi {
-    private Bucket[] daftarProduk;
-    private int[] daftarQty;
+class Transaksi {
+    private Bucket[] buckets;
+    private Customer customer;
+    private int[] Qty;
     private int jumlahItem;
 
-    public ContainerTransaksi(int kapasitas) {
-        this.daftarProduk = new Bucket[kapasitas];
-        this.daftarQty = new int[kapasitas];
+    //constructor
+    public Transaksi(int kapasitas) {
+        this.buckets = new Bucket[kapasitas];
+        this.Qty = new int[kapasitas];
         this.jumlahItem = 0;
     }
+
 
     public boolean tambahItem(Bucket produk, int qty) {
         int posisi = cariPosisiProduk(produk);
 
         if (posisi != -1) {
-            daftarQty[posisi] += qty;
+            Qty[posisi] += qty;
             return true;
         }
 
-        if (jumlahItem >= daftarProduk.length) {
+        if (jumlahItem >= buckets.length) {
             return false;
         }
 
-        daftarProduk[jumlahItem] = produk;
-        daftarQty[jumlahItem] = qty;
+        buckets[jumlahItem] = produk;
+        Qty[jumlahItem] = qty;
         jumlahItem++;
         return true;
     }
@@ -34,21 +37,21 @@ class ContainerTransaksi {
         if (posisi == -1) {
             return 0;
         }
-        return daftarQty[posisi];
+        return Qty[posisi];
     }
 
     public double hitungTotal() {
         double total = 0;
         for (int i = 0; i < jumlahItem; i++) {
-            total += daftarProduk[i].getHargaDasar() * daftarQty[i];
+            total += buckets[i].getHargaDasar() * Qty[i];
         }
         return total;
     }
 
     public void kurangiStokProduk() {
         for (int i = 0; i < jumlahItem; i++) {
-            Bucket produk = daftarProduk[i];
-            produk.setStok(produk.getStok() - daftarQty[i]);
+            Bucket produk = buckets[i];
+            produk.setStok(produk.getStok() - Qty[i]);
         }
     }
 
@@ -61,24 +64,24 @@ class ContainerTransaksi {
     }
 
     public Bucket getProduk(int index) {
-        return daftarProduk[index];
+        return buckets[index];
     }
 
     public int getQty(int index) {
-        return daftarQty[index];
+        return Qty[index];
     }
 
     public void kosongkan() {
         for (int i = 0; i < jumlahItem; i++) {
-            daftarProduk[i] = null;
-            daftarQty[i] = 0;
+            buckets[i] = null;
+            Qty[i] = 0;
         }
         jumlahItem = 0;
     }
 
     private int cariPosisiProduk(Bucket produk) {
         for (int i = 0; i < jumlahItem; i++) {
-            if (daftarProduk[i] == produk) {
+            if (buckets[i] == produk) {
                 return i;
             }
         }
